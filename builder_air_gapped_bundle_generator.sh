@@ -14,6 +14,9 @@ source ${S_DIR}/utils.sh
 #     these are forks of the corrisponding habitat builder services.
 #     The forks demonstrate running the services as non hab and non root users.
 #     This is nessaesry for some customers.
+#     You can replace the devoptimist pkgs with your own
+#     or remove them if you just want the vanilla habitat builder
+#     services
 # - core sup and launcher: using latest stable versions
 SERVICES=(
   core/hab-sup/0.72.0/20190103234046
