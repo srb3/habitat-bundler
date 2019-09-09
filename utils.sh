@@ -140,7 +140,6 @@ function make_pkgs_and_keys_dir() {
     mkdir -p ${KEY_PATH}
   fi
 }
-
 # if we are bootstrapping the builder then we
 # need to make a small install scritp
 function make_install_script() {
@@ -154,64 +153,67 @@ HAB="/bin/hab"
 
 cp ${BIN_PATH}/hab ${HAB}
 
+${HAB} license accept
+
 # these hab packages need to be installed in order (as far as I know)
 # otherwise we get dep issues when we do a hab pkg install <local-file>
 # might be a better way to do this
 # https://github.com/habitat-sh/on-prem-builder/issues/117
 CORE=(
-core-linux-headers-*x86_64*.hart
-core-glibc-*x86_64*.hart
-core-gcc-libs-*x86_64*.hart
-core-gdbm-*x86_64*.hart
-core-gmp-*x86_64*.hart
-core-pcre-*x86_64*.hart
-core-grep-*x86_64*.hart
-core-groff-*x86_64*.hart
-core-attr-*x86_64*.hart
-core-acl-*x86_64*.hart
-core-libcap-*x86_64*.hart
-core-sed-*x86_64*.hart
-core-zlib-*x86_64*.hart
-core-binutils-*x86_64*.hart
-core-coreutils-*x86_64*.hart
-core-libtool-*x86_64*.hart
-core-libffi-*x86_64*.hart
-core-ncurses-*x86_64*.hart
-core-cacerts-2018.03.07-*x86_64*.hart
-core-openssl-*x86_64*.hart
-core-readline-*x86_64*.hart
-core-sqlite-*x86_64*.hart
-core-bzip2-*x86_64*.hart
-core-expat-*x86_64*.hart
-core-python-*x86_64*.hart
-core-nghttp2-*x86_64*.hart
-core-xz-*x86_64*.hart
-core-libarchive-*x86_64*.hart
-core-libsodium-*x86_64*.hart
-core-zeromq-*x86_64*.hart
-core-proj-*x86_64*.hart
-core-bash-*x86_64*.hart
-core-libossp-uuid-*x86_64*.hart
-core-db-*x86_64*.hart
-core-less-*x86_64*.hart
-core-perl-*x86_64*.hart
-core-curl-*x86_64*.hart
-core-gdal-*x86_64*.hart
-core-geos-*x86_64*.hart
-core-libxml2-*x86_64*.hart
-core-postgresql-*x86_64*.hart
-core-libedit-*x86_64*.hart
-core-nginx-*x86_64*.hart
-core-cyrus-sasl-*x86_64*.hart
-core-libevent-*x86_64*.hart
-core-memcached-*x86_64*.hart
-core-aws-cli-*x86_64*.hart
-core-minio-*x86_64*.hart
-habitat-builder-datastore-*x86_64*.hart
-habitat-builder-api-*x86_64*.hart
-habitat-builder-api-proxy-*x86_64*.hart
-habitat-builder-memcached*x86_64*.hart
-habitat-builder-minio-*x86_64*.hart
+core-linux-headers
+core-glibc
+core-gcc-libs
+core-gdbm
+core-gmp
+core-pcre
+core-grep
+core-groff
+core-attr
+core-acl
+core-libcap
+core-sed
+core-zlib
+core-binutils
+core-coreutils
+core-libtool
+core-libffi
+core-ncurses
+core-cacerts
+core-openssl-fips
+core-openssl
+core-readline
+core-sqlite
+core-bzip2
+core-expat
+core-python
+core-nghttp2
+core-xz
+core-libarchive
+core-libsodium
+core-zeromq
+core-proj
+core-bash
+core-libossp-uuid
+core-db
+core-less
+core-perl
+core-curl
+core-gdal
+core-geos
+core-libxml2
+core-postgresql
+core-libedit
+core-nginx
+core-cyrus-sasl
+core-libevent
+core-memcached
+core-aws-cli
+core-minio
+habitat-builder-datastore
+habitat-builder-api
+habitat-builder-api-proxy
+habitat-builder-memcached
+habitat-builder-minio
 )
 
 # install all keys
@@ -221,7 +223,9 @@ done
 
 # install all packages that need to be installed in a particuler order
 for i in ${CORE[@]}; do
-  ${HAB} pkg install ${PKG_PATH}/$i
+  if ls ${PKG_PATH}/* | egrep "$i"; then
+    ${HAB} pkg install ${PKG_PATH}/${i}-*x86_64*.hart
+  fi
 done
 
 # install all packages (we just skip the previously installed ones)
